@@ -81,7 +81,7 @@ Object getProjectTests(String name) {
         if (project.name == name) {
             def jenkin_tests = [];
                 for (test in project.tests) {
-                    if (test.operational) {
+                    if (test.jenkins_pipeline) {
                         jenkin_tests << test.url;
                     }
                 }
