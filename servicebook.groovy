@@ -1,8 +1,6 @@
-import groovy.json.JsonSlurper;
+import groovy.json.JsonSlurperClassic;
 
-/*
- * HTTP Client
- */
+
 HttpResponse doGetHttpRequest(String requestUrl){
     URL url = new URL(requestUrl);
     HttpURLConnection connection = url.openConnection();
@@ -74,7 +72,7 @@ class HttpResponse {
 // Servicebook iterator to get operational tests for a given project
 Object getProjectTests(String name) {
     resp = doGetHttpRequest("http://servicebook.dev.mozaws.net/api/api/project").body;
-    def jsonSlurper = new JsonSlurper();
+    def jsonSlurper = new JsonSlurperClassic();
     def projects = jsonSlurper.parseText(resp);
 
     for (project in projects.data) {
@@ -82,7 +80,7 @@ Object getProjectTests(String name) {
             def jenkin_tests = [];
                 for (test in project.tests) {
                     if (test.jenkins_pipeline) {
-                        jenkin_tests << test.url;
+                        jenkin_tests << test;
                     }
                 }
             return jenkin_tests;
@@ -91,12 +89,28 @@ Object getProjectTests(String name) {
     return null;
 }
 
-stage("1") {
-    def tests = getProjectTests("ABSearch");
+def tests = getProjectTests("Kinto");
 
-    // TODO: here we have the list of repo to run
-    // TODO: for each one, clone repo to test slave
-    // TODO: execute run file in repo
-    println(tests);
+
+for (test in tests) {
+
+    stage(test.name) {
+        echo 'blah';
+        echo "checking out " + test.url + ".git";
+        node {
+            checkout([$class: 'GitSCM', 
+                  branches: [[name: '*/master']], 
+                  doGenerateSubmoduleConfigurations: false, 
+                  extensions: [[$class: 'CleanCheckout']], 
+                  submoduleCfg: [], 
+                  userRemoteConfigs: [[url: test.url + '.git']]]
+            )
+        }
+        echo "checked out"
+        node { 
+            sh "chmod +x run"
+            sh "./run"
+
+        }
+    }
 }
-
