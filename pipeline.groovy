@@ -123,7 +123,7 @@ def runStage(test) {
                 sh "./run"
             }
         } else {
-            echo test.url + " is not allowed"
+            throw new IOException(test.url + " is not allowed")
         }
     }
 }
