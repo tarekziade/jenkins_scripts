@@ -131,6 +131,7 @@ def runStage(test) {
 
 def testProject(name) {
     def tests = getProjectTests(name)
+    def failures = []
 
     for (test in tests) {
         timeout(time: 300, unit: 'SECONDS') {
@@ -138,10 +139,12 @@ def testProject(name) {
                 runStage(test)
             } catch (exc) {
                 echo test.name + " failed"
-                throw exc
+                echo exc
+                failures.add(test.name)
             }
         }
     }
+    return failures.size()
 }
 
 
