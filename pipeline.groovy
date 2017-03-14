@@ -104,30 +104,40 @@ def validURL(url) {
 }
 
 
+def runStage(name) {
+    stage(test.name) {
+        if (validURL(test.url)) {
+            echo "checking out " + test.url + ".git"
+            node {
+                checkout([$class: 'GitSCM',
+                branches: [[name: '*/master']],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [[$class: 'CleanCheckout']],
+                submoduleCfg: [], 
+                userRemoteConfigs: [[url: test.url + '.git']]]
+                )
+            }
+            echo "checked out"
+            node {
+                sh "chmod +x run"
+                sh "./run"
+            }
+        } else {
+            echo test.url + " is not allowed"
+        }
+    }
+}
+
 
 def testProject(name) {
     def tests = getProjectTests(name);
-
     for (test in tests) {
-        stage(test.name) {
-            if (validURL(test.url)) {
-                echo "checking out " + test.url + ".git"
-                node {
-                    checkout([$class: 'GitSCM',
-                    branches: [[name: '*/master']],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'CleanCheckout']],
-                    submoduleCfg: [], 
-                    userRemoteConfigs: [[url: test.url + '.git']]]
-                    )
-                }
-                echo "checked out"
-                node {
-                    sh "chmod +x run"
-                    sh "./run"
-                }
-            } else {
-                echo test.url + " is not allowed"
+        timeout(time: 300, unit: 'SECONDS') {
+            try {
+                runStage(test)
+            } catch (exc) {
+                echo test.name + " failed"
+                throw exc
             }
         }
     }
