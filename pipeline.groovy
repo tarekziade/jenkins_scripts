@@ -91,29 +91,44 @@ Object getProjectTests(String name) {
 }
 
 
+def validURL(url) {
+    if (url.startsWith('https://github.com/mozilla/')) {
+        return true
+    }
+    if (url.startsWith('https://github.com/mozilla-services/')) {
+        return true
+    }
+    return false
+}
+
+
 def testProject(name) {
     def tests = getProjectTests(name);
 
     for (test in tests) {
         stage(test.name) {
-            echo 'blah';
-            echo "checking out " + test.url + ".git";
-            node {
-                checkout([$class: 'GitSCM', 
-                  branches: [[name: '*/master']], 
-                  doGenerateSubmoduleConfigurations: false, 
-                  extensions: [[$class: 'CleanCheckout']], 
-                  submoduleCfg: [], 
-                  userRemoteConfigs: [[url: test.url + '.git']]]
-                )
-            }
-            echo "checked out"
-            node {
-                sh "chmod +x run"
-                sh "./run"
+            if (validURL(test.url)) {
+                echo "checking out " + test.url + ".git"
+                node {
+                    checkout([$class: 'GitSCM',
+                    branches: [[name: '*/master']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'CleanCheckout']],
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[url: test.url + '.git']]]
+                    )
+                }
+                echo "checked out"
+                node {
+                    sh "chmod +x run"
+                    sh "./run"
+                }
+            } else {
+                echo test.url + " is not allowed"
             }
         }
     }
 }
+
 
 return this;
