@@ -1,0 +1,2 @@
+test:
+	groovy pipeline.groovy

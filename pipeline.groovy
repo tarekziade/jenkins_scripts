@@ -90,28 +90,30 @@ Object getProjectTests(String name) {
     return null;
 }
 
-def tests = getProjectTests("Kinto");
 
+def testProject(name) {
+    def tests = getProjectTests(name);
 
-for (test in tests) {
-
-    stage(test.name) {
-        echo 'blah';
-        echo "checking out " + test.url + ".git";
-        node {
-            checkout([$class: 'GitSCM', 
+    for (test in tests) {
+        stage(test.name) {
+            echo 'blah';
+            echo "checking out " + test.url + ".git";
+            node {
+                checkout([$class: 'GitSCM', 
                   branches: [[name: '*/master']], 
                   doGenerateSubmoduleConfigurations: false, 
                   extensions: [[$class: 'CleanCheckout']], 
                   submoduleCfg: [], 
                   userRemoteConfigs: [[url: test.url + '.git']]]
-            )
-        }
-        echo "checked out"
-        node { 
-            sh "chmod +x run"
-            sh "./run"
-
+                )
+            }
+            echo "checked out"
+            node {
+                sh "chmod +x run"
+                sh "./run"
+            }
         }
     }
 }
+
+return this;
