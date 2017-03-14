@@ -104,7 +104,7 @@ def validURL(url) {
 }
 
 
-def runStage(name) {
+def runStage(test) {
     stage(test.name) {
         if (validURL(test.url)) {
             echo "checking out " + test.url + ".git"
@@ -130,7 +130,8 @@ def runStage(name) {
 
 
 def testProject(name) {
-    def tests = getProjectTests(name);
+    def tests = getProjectTests(name)
+
     for (test in tests) {
         timeout(time: 300, unit: 'SECONDS') {
             try {
