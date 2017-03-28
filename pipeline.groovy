@@ -91,7 +91,7 @@ Object getProjectTests(String name) {
 }
 
 
-allowedOrgs = ['Kinto', 'mozilla', 'mozilla-services']
+allowedOrgs = ['Kinto', 'mozilla', 'mozilla-services', 'tarekziade']
 
 
 def validURL(url) {
