@@ -139,7 +139,7 @@ def testProject(name) {
                 runStage(test)
             } catch (exc) {
                 echo test.name + " failed"
-                echo "Caught: ${err}"
+                echo "Caught: ${exc}"
                 failures.add(test.name)
             }
         }
