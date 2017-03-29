@@ -91,10 +91,9 @@ Object getProjectTests(String name) {
 }
 
 
-allowedOrgs = ['Kinto', 'mozilla', 'mozilla-services', 'tarekziade']
-
 
 def validURL(url) {
+    allowedOrgs = ['Kinto', 'mozilla', 'mozilla-services', 'tarekziade']
     for (allowedOrg in allowedOrgs) {
         if (url.startsWith('https://github.com/' + allowedOrg + '/')) {
             return true

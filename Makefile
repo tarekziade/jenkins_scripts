@@ -1,2 +1,2 @@
 test:
-	groovy pipeline.groovy
+	groovy tests/test_pipeline.groovy
