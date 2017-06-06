@@ -78,15 +78,19 @@ Object getProjectTests(String name) {
 
     for (project in projects.data) {
         if (project.name == name) {
+            echo "The project " + name + " was found!"
+
             def jenkin_tests = [];
                 for (test in project.tests) {
                     if (test.jenkins_pipeline) {
+                        echo "Adding one test " + test.name
                         jenkin_tests << test;
                     }
                 }
             return jenkin_tests;
         }
     }
+    echo "The project " + name + " was not found"
     return null;
 }
 
