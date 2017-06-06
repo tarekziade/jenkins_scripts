@@ -94,11 +94,13 @@ Object getProjectTests(String name) {
 
 def validURL(url) {
     allowedOrgs = ['Kinto', 'mozilla', 'mozilla-services', 'tarekziade', 'rpappalax']
+    
     for (allowedOrg in allowedOrgs) {
         if (url.startsWith('https://github.com/' + allowedOrg + '/')) {
             return true
         }
     }
+    echo url + " is not a valid url"
     return false
 }
 
@@ -135,6 +137,8 @@ def testProject(name) {
     for (test in tests) {
         timeout(time: 300, unit: 'SECONDS') {
             try {
+                echo "Running " +  test.name
+                echo "URL is " + test.url
                 runStage(test)
             } catch (exc) {
                 echo test.name + " failed"
