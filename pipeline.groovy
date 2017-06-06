@@ -131,6 +131,7 @@ def runStage(test) {
 
 
 def testProject(name) {
+    echo "Testing project " + name
     def tests = getProjectTests(name)
     def failures = []
 
